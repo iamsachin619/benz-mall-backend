@@ -17,10 +17,10 @@ app.use('/user',userRoutes)
 
 
 // Creating a cron job which runs on every 2 minutes
-cron.schedule('*/2 * * * *', function() {
-    console.log("running a task every 2 mins");
-    betMaker()
-});
+// cron.schedule('*/2 * * * *', function() {
+//     console.log("running a task every 2 mins");
+//     betMaker()
+// });
 
 //mongo db connect
 const connect =  async () => {

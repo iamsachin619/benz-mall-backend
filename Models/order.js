@@ -9,7 +9,7 @@ const orderSchema = new mongoose.Schema({
         required: true,
     },
     betId:{
-        type:String,
+        type:Number,
         required:true
     },
     createdAt:{

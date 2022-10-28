@@ -42,6 +42,37 @@ async function placeOrder(req, res){
     
 }
 
+async function getOrderHistory(req, res){
+    let user_id = req.body._id
+    let orderHistory = await Order.aggregate([
+        {
+            $match:{user_id:user_id}
+        },
+        {
+            $lookup: {
+                from: "bets",
+                localField: "betId",
+                foreignField: "betId",
+                as: "bet"
+                }
+        },
+        {
+            $project:{
+            
+                "betId": 1,
+                "amt": 1,
+                "choice": 1,
+                "createdAt":1,
+                "result":"$bet.result"
+            }
+        }
+
+    ])
+    console.log(orderHistory)
+    res.status(200).json({orderHistory})
+}
+
 module.exports = {
-    placeOrder
+    placeOrder,
+    getOrderHistory
 }
