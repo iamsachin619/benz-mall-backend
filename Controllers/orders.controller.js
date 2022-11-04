@@ -4,13 +4,14 @@ const Order = require("../Models/order")
 const User = require("../Models/user")
 
 async function placeOrder(req, res){
-    let user_id = req.body._id
+    let user_id = req._id
     let betId = req.body.betId
     let amt = req.body.amt
     let choice = req.body.choice
+
     let user = await User.findById(user_id)
-    // console.log({user})
     let bet = await Bet.findOne({betId})
+    // console.log({user, body:req.body, bet})
     
     if(!bet){res.status(403).json({message:'Bet yet to come'});return;}
     if(bet.status != "ACTIVE"){res.status(400).json({message:"Bet not active"});return;}
@@ -30,8 +31,7 @@ async function placeOrder(req, res){
 
             await User.updateOne(
                 {_id:user_id},
-                {wallet: user.wallet - amt,
-                $push:{betOrders: {amt: orderData.amt,orderId:orderData._id}}}
+                {wallet: user.wallet - amt}
                 )
             await Bet.updateOne({betId},{$inc:{[`${choice}`]:amt}, $push:{orders:orderData._id}})
             res.status(200).json({message:'Order placed successfully'})
@@ -43,7 +43,7 @@ async function placeOrder(req, res){
 }
 
 async function getOrderHistory(req, res){
-    let user_id = req.body._id
+    let user_id = req._id
     let orderHistory = await Order.aggregate([
         {
             $match:{user_id:user_id}
@@ -65,10 +65,18 @@ async function getOrderHistory(req, res){
                 "createdAt":1,
                 "result":"$bet.result"
             }
+        },
+        {
+            $sort:{
+                'createdAt':-1
+            }
+        },
+        {
+            $limit:5
         }
 
     ])
-    console.log(orderHistory)
+    
     res.status(200).json({orderHistory})
 }
 

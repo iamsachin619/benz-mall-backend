@@ -26,10 +26,9 @@ const userSchema = new mongoose.Schema({
     },
     
     
-    betOrders: [{
-        type: Object,
-        required: true
-    }]   
+    // betOrders: [{
+    //     type: Object
+    // }]   
 },
 { collection: 'users' });
 

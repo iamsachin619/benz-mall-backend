@@ -1,7 +1,7 @@
 const User = require('../Models/user')
 const jwt = require("jsonwebtoken");
 var SHA256 = require("crypto-js/sha256");
-async function Login(req,res){
+async function Login(req,res){  
     
     let email = req.body.email
     let pass = req.body.pass
@@ -27,24 +27,25 @@ async function Login(req,res){
 }
 
 async function Register(req, res){
+    console.log(req.body)
     let email = req.body.email
     let pass = req.body.pass
 
     let existUser = await User.findOne({email: email})
     console.log({existUser})
-    if(existUser){res.status(400).json({message:'User with this email already exists'});return;}
+    if(existUser){res.status(400).json({message:'Email already exists'});return;}
 
     let user = await User({
         email:email,
         password: SHA256(pass),
-        wallet:0,
+        wallet:500,
         contact:'',
         parsonalDetails:{}
     })
     user.save((err, userData)=>{
         if (err) {
             console.log(err)
-            res.json({message:'Bad request'}).status(400)
+            res.status(400).json({message:'Bad request!'})
         }else{
             const token = jwt.sign(
                 { id: userData._id, email: userData.email },
@@ -65,5 +66,10 @@ async function Register(req, res){
 
 }
 
+async function GetWalletUpdated(req, res){
+  let user_id = req._id
+  let user = await User.findOne({_id:user_id},{wallet:1})
+  res.status(200).json(user._doc.wallet)
+}
 
-module.exports = {Login, Register}
+module.exports = {Login, Register, GetWalletUpdated}

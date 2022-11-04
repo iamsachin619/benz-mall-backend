@@ -2,6 +2,10 @@ const Bet = require('../Models/bet')
 const Order = require('../Models/order')
 const User = require('../Models/user')
 
+async function getActiveBet(req, res){
+    let activebet = await Bet.findOne({status:'ACTIVE'})
+    res.status(200).json({_id:activebet._id, betId: activebet.betId,createdAt:activebet.createdAt})
+}
 async function addBet(){
     let newBet = Bet({
         email:`${Math.random()*20000}@random.com`,
@@ -23,7 +27,7 @@ async function addBet(){
 async function updateActiveBetToDone(){
     
     let activebet = await Bet.findOneAndUpdate({status:'ACTIVE'},{status:"DONE"}, {new:true})
-    console.log({activebet})
+    // console.log({activebet})
     return activebet.betId
 }
 
@@ -34,7 +38,7 @@ async function generateBetResult(){
     let giveToY = activebet.Y * process.env.YELLOW
     let giveToV = activebet.V * process.env.VILOT
     if(!giveToV){ giveToY = 0}
-    console.log({giveToG, giveToV, giveToY})
+    // console.log({giveToG, giveToV, giveToY})
     let updatedBet;
     if(giveToG <= giveToY && giveToG <= giveToV){
         updatedBet = await Bet.findOneAndUpdate({status:'ACTIVE'},{result:"G"},{new:true})
@@ -51,7 +55,7 @@ async function generateBetResult(){
 }
 
 async function updateWinnerWallets(activebet){
-    console.log(activebet)
+    // console.log(activebet)
     let Multiplyer
     switch (activebet.result) {
         case 'G':
@@ -61,14 +65,15 @@ async function updateWinnerWallets(activebet){
             Multiplyer = 'YELLOW' 
             break;
         case 'V':
-            Multiplyer = 'VIOLET' 
+            Multiplyer = 'VILOT' 
             break;
         default:
             break;
     }
+    
     for(let order of activebet.orders){
         let orderData = await Order.findOne({_id:order})
-        console.log({orderData})
+        // console.log({orderData,pp:process.env[Multiplyer] ,penv:process.env})
         if(orderData.choice == activebet.result){
             let user = await User.updateOne({_id:orderData.user_id}, {$inc:{wallet:orderData.amt * process.env[Multiplyer] }})
         }
@@ -78,4 +83,9 @@ async function updateWinnerWallets(activebet){
 }
 
 
-module.exports = {addBet, updateActiveBetToDone, generateBetResult, updateWinnerWallets}
+async function syncTimeOfLastBet(){
+    await Bet.findOneAndUpdate({status:'ACTIVE'},{$set:{createdAt: new Date()}},{new:true})
+    
+}
+
+module.exports = {addBet, updateActiveBetToDone, generateBetResult, updateWinnerWallets, getActiveBet, syncTimeOfLastBet}
