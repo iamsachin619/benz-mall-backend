@@ -12,7 +12,14 @@ const userRoutes = require('./Routes/users.route');
 app.use(cookieParser())
 app.use(express.json());
 app.use(bodyParser.json())
-app.use(cors({origin: 'http://localhost:3000',credentials: true}))
+const whitelist = ['https://game-bingo-1b719.web.app/','http://localhost:3000']
+app.use(cors({origin:function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  } ,credentials: true}))
 
 const { addBet, updateActiveBetToDone, updateWinnerWallets, syncTimeOfLastBet } = require('./Controllers/bet.controller');
 const { betMaker } = require('./CronFunction/cron');
