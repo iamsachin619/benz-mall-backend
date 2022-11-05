@@ -12,7 +12,7 @@ const userRoutes = require('./Routes/users.route');
 app.use(cookieParser())
 app.use(express.json());
 app.use(bodyParser.json())
-const whitelist = ['https://game-bingo-1b719.web.app/','http://localhost:3000']
+const whitelist = ['https://game-bingo-1b719.web.app','http://localhost:3000']
 app.use(cors({origin:function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true)
