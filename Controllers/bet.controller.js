@@ -4,6 +4,9 @@ const User = require('../Models/user')
 
 async function getActiveBet(req, res){
     let activebet = await Bet.findOne({status:'ACTIVE'})
+    if(!activebet){ 
+        res.status(204).json({message:'no bets active'})
+    }
     res.status(200).json({_id:activebet._id, betId: activebet.betId,createdAt:activebet.createdAt})
 }
 async function addBet(){
