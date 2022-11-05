@@ -18,7 +18,7 @@ async function Login(req,res){
       );
       res
       .status(200)
-      .cookie("access_token", token,{sameSite: 'none'})
+      .cookie("access_token", token,{sameSite: 'none', secure: true })
       .json({
         email: user.email,
         wallet: user.wallet
@@ -53,7 +53,7 @@ async function Register(req, res){
               );
               res
                 .status(200)
-                .cookie("access_token", token)
+                .cookie("access_token", token,{sameSite: 'none', secure: true })
                 .json({
                   email: userData.email,
                   wallet: userData.wallet
