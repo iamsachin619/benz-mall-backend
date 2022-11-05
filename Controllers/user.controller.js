@@ -18,7 +18,7 @@ async function Login(req,res){
       );
       res
       .status(200)
-      .cookie("access_token", token)
+      .cookie("access_token", token,{sameSite: 'none'})
       .json({
         email: user.email,
         wallet: user.wallet
