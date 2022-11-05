@@ -40,7 +40,7 @@ const connect =  async () => {
         console.log(err);
     }
 }
-app.listen(443,()=>{
+app.listen(process.env.PORT,()=>{
     connect()
     // syncTimeOfLastBet()
     console.log('server running at 3008')
