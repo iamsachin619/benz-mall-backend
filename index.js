@@ -40,7 +40,7 @@ const connect =  async () => {
         console.log(err);
     }
 }
-app.listen(80,()=>{
+app.listen(443,()=>{
     connect()
     // syncTimeOfLastBet()
     console.log('server running at 3008')
