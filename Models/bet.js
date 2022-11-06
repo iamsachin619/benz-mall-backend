@@ -4,10 +4,7 @@ const autoIncrement = require('mongoose-auto-increment');
 const betSchema = new mongoose.Schema({
     
 
-    email: {
-        type: String,
-        required: true,
-    },
+   
     createdAt:{
         type: Date,
         default: mongoose.now

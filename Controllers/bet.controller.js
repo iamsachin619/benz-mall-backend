@@ -9,9 +9,19 @@ async function getActiveBet(req, res){
     }
     res.status(200).json({_id:activebet._id, betId: activebet.betId,createdAt:activebet.createdAt})
 }
+
+async function returnActiveBet(){
+    let activeBet = await Bet.findOne({status:"ACTIVE"})
+    
+    if(!activeBet){
+        return false
+    }
+
+    return activeBet
+}
 async function addBet(){
     let newBet = Bet({
-        email:`${Math.random()*20000}@random.com`,
+
         Y:0,
         G:0,
         V:0
@@ -91,4 +101,4 @@ async function syncTimeOfLastBet(){
     
 }
 
-module.exports = {addBet, updateActiveBetToDone, generateBetResult, updateWinnerWallets, getActiveBet, syncTimeOfLastBet}
+module.exports = {addBet, updateActiveBetToDone, generateBetResult, updateWinnerWallets, getActiveBet, syncTimeOfLastBet, returnActiveBet}

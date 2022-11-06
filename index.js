@@ -21,7 +21,7 @@ app.use(cors({origin:function (origin, callback) {
     }
   } ,credentials: true}))
 
-const { addBet, updateActiveBetToDone, updateWinnerWallets, syncTimeOfLastBet } = require('./Controllers/bet.controller');
+const {  returnActiveBet } = require('./Controllers/bet.controller');
 const { betMaker } = require('./CronFunction/cron');
 
 app.use('/user',userRoutes)
@@ -50,5 +50,17 @@ const connect =  async () => {
 app.listen(process.env.PORT,()=>{
     connect()
     // syncTimeOfLastBet()
+    returnActiveBet()
+    .then(res =>{
+      let currentData = new Date()
+      console.log({rr:res._id})
+      let betExpire = res.createdAt
+      betExpire.setSeconds(betExpire.getSeconds() + 120)
+      if(currentData>betExpire){
+        console.log('made new bet due to last bet expired')
+        betMaker()
+      }
+      
+    })
     console.log('server running at 3008')
 })
