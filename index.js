@@ -21,7 +21,7 @@ app.use(cors({origin:function (origin, callback) {
     }
   } ,credentials: true}))
 
-const {  returnActiveBet } = require('./Controllers/bet.controller');
+const {  returnActiveBet, addBet } = require('./Controllers/bet.controller');
 const { betMaker } = require('./CronFunction/cron');
 
 app.use('/user',userRoutes)
@@ -52,13 +52,19 @@ app.listen(process.env.PORT,()=>{
     // syncTimeOfLastBet()
     returnActiveBet()
     .then(res =>{
-      let currentData = new Date()
-      console.log({rr:res._id})
-      let betExpire = res.createdAt
-      betExpire.setSeconds(betExpire.getSeconds() + 120)
-      if(currentData>betExpire){
-        console.log('made new bet due to last bet expired')
-        betMaker()
+
+      if(res != false){
+        let currentData = new Date()
+        console.log({rr:res._id})
+        let betExpire = res.createdAt
+        betExpire.setSeconds(betExpire.getSeconds() + 120)
+        if(currentData>betExpire){
+          console.log('ran bet maker due to last bet expired')
+          betMaker()
+        }
+      }else{
+        console.log('new bet created as no active bet')
+        addBet();
       }
       
     })
