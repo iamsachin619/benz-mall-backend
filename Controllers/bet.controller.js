@@ -53,16 +53,32 @@ async function generateBetResult(){
     if(!giveToV){ giveToY = 0}
     // console.log({giveToG, giveToV, giveToY})
     let updatedBet;
-    if(giveToG <= giveToY && giveToG <= giveToV){
-        updatedBet = await Bet.findOneAndUpdate({status:'ACTIVE'},{result:"G"},{new:true})
-        //g wins
-    }else if(giveToY <= giveToG && giveToY <= giveToV){
-        //Y wins
-        updatedBet = await Bet.findOneAndUpdate({status:'ACTIVE'},{result:"Y"},{new:true})
+
+
+    if(giveToG<=giveToY){
+        if(giveToG<giveToV){
+            updatedBet = await Bet.findOneAndUpdate({status:'ACTIVE'},{result:"G"},{new:true})
+        }else{
+            updatedBet = await Bet.findOneAndUpdate({status:'ACTIVE'},{result:"V"},{new:true})
+        }
     }else{
-        //v wins
-        updatedBet = await Bet.findOneAndUpdate({status:'ACTIVE'},{result:"V"},{new:true})
+        if(giveToY<giveToV){
+            updatedBet = await Bet.findOneAndUpdate({status:'ACTIVE'},{result:"Y"},{new:true})
+        }else{
+            updatedBet = await Bet.findOneAndUpdate({status:'ACTIVE'},{result:"V"},{new:true})
+        }
     }
+
+    // if(giveToG <= giveToY && giveToG <= giveToV){
+    //     updatedBet = await Bet.findOneAndUpdate({status:'ACTIVE'},{result:"G"},{new:true})
+    //     //g wins
+    // }else if(giveToY <= giveToG && giveToY <= giveToV){
+    //     //Y wins
+    //     updatedBet = await Bet.findOneAndUpdate({status:'ACTIVE'},{result:"Y"},{new:true})
+    // }else{
+    //     //v wins
+    //     updatedBet = await Bet.findOneAndUpdate({status:'ACTIVE'},{result:"V"},{new:true})
+    // }
     return updatedBet
 
 }
